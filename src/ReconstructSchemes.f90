@@ -225,5 +225,15 @@
     !.........nothing
     return
     end subroutine
+    !//Pirozzoli hybrid-compact-weno scheme
+    subroutine HybridCompactWeno(nst,ned,icur,jcur,kcur,iinc,jinc,kinc,no_blk)
+    use fieldpm
+    use ctrlpm
+    type(BLOCK_TYPE),pointer :: pBlk
+    integer no_blk
+    real    :: WENO_eps=1.e-6
+    real    :: LM(5,5),RM(5,5),fvar(5,-3:3),hh(5)
     
+    return
+    end subroutine
     
