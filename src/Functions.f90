@@ -93,9 +93,10 @@ end subroutine
  !for global variables
     allocate(fp(nvar,MINDIMST:MAXDIMED))
     allocate(fn(nvar,MINDIMST:MAXDIMED))
-    allocate(hflux(nvar,MINDIMST:MAXDIMED))
+    allocate(hflux(nvar,MINDIMST-1:MAXDIMED))
     allocate(hp(nvar,MINDIMST:MAXDIMED))
     allocate(hn(nvar,MINDIMST:MAXDIMED))
+    allocate(flux(nvar,MINDIMST:MAXDIMED))
  return
     end subroutine 
 
