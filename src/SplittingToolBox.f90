@@ -55,6 +55,9 @@ pBlk=>compblock(no_blk)
         fn(3,icnt)=v3*(fnbd1(2)*pblk%v(i,j,k)+v2*vary_+v1*pblk%v(i,j,k))
         fn(4,icnt)=v3*(fnbd1(2)*pblk%w(i,j,k)+v2*varz_+v1*pblk%w(i,j,k))
         fn(5,icnt)=v3*(fnbd1(2)*dedrho+v2*Uc_+v1*h)
+        !flux
+        flux(:,icnt)=fp(:icnt)+fn(:,icnt)
+        !
         i=i+iinc
         j=j+jinc
         k=k+kinc

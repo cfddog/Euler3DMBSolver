@@ -233,7 +233,7 @@
     integer no_blk
     real    :: WENO_eps=1.e-6
     real    :: LM(5,5),RM(5,5),fvar(5,-3:3),hh(5)
-    real    :: arr(nst-1:ned,3),brr(nst-1:ned),xrr(nst-1:ned) !solve a*x=bs
+    real    :: arr(nst-1:ned,3),brr(nst-1:ned),xrr(nst-1:ned) !solve a*x=b
     
     return
     end subroutine
