@@ -37,6 +37,8 @@ use TYPEDEFINE
  !helping vectors and tensors
  integer                               :: MINDIMST,MAXDIMED
  real,pointer,dimension(:,:)           :: fp,fn,hflux,hp,hn
+ real,pointer,dimension(:,:)           :: flux
+ real,pointer                          :: arr(:,:),brr(:),xrr(:) !array used for solving band-eqn-system
  Real time_begin , time_end1 , time_end2
 end module
 module freepm
