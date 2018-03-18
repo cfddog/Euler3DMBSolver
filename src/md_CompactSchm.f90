@@ -35,6 +35,7 @@ module md_CompactSchm
     subroutine CentralCompact_Opt4(nst,ned,varin,varout)
     real varin(nst:ned),varout(nst:ned)
     real arr(nst:ned,5),brr(nst:ned),xrr(nst:ned)
+	
     !fulfill the matrix
     !//i=nst
     arr(nst,1)=0.;arr(nst,2)=0.0;arr(nst,3)=1.0;arr(nst,4)=bb0_1;arr(nst,5)=bb0_2
@@ -59,8 +60,9 @@ module md_CompactSchm
     arr(ned-2,5)=bb2_0;arr(ned-2,4)=bb2_1;arr(ned-2,3)=1.0;arr(ned-2,2)=bb2_3;arr(ned-2,1)=bb2_4
     brr(ned-2)=-ab2_0*(varin(ned)-varin(ned-2))-ab2_1*(varin(ned-1)-varin(ned-2))-ab2_3*(varin(ned-3)-varin(ned-2))-ab2_4*(varin(ned-4)-varin(ned-2))-ab2_5*(varin(ned-5)-varin(ned-2))  
     !//call band-eqn solution
-    call BandEqnSolve()
-    
+    call BandEqnSolve(ned-nst+1,2,2,arr,brr,xrr)
+    varout=xrr
+	
     return
     end subroutine
     
