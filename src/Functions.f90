@@ -74,11 +74,17 @@ end subroutine
                pBlk%w(pBlk%ist:pBlk%ied,pBlk%jst:pBlk%jed,pBlk%kst:pBlk%ked),&
                pBlk%p(pBlk%ist:pBlk%ied,pBlk%jst:pBlk%jed,pBlk%kst:pBlk%ked),&
                pBlk%rho(pBlk%ist:pBlk%ied,pBlk%jst:pBlk%jed,pBlk%kst:pBlk%ked) )
+			   
      allocate( pBlk%Q(nvar,pBlk%ist:pBlk%ied,pBlk%jst:pBlk%jed,pBlk%kst:pBlk%ked),&
                pBlk%Qn(nvar,pBlk%ist:pBlk%ied,pBlk%jst:pBlk%jed,pBlk%kst:pBlk%ked) )
      allocate( pBlk%dQn(nvar,pBlk%ist:pBlk%ied,pBlk%jst:pBlk%jed,pBlk%kst:pBlk%ked),&
                pBlk%dQ(nvar,pBlk%ist:pBlk%ied,pBlk%jst:pBlk%jed,pBlk%kst:pBlk%ked) )
-     allocate( pBlk%RHS(nvar,pBlk%ist:pBlk%ied,pBlk%jst:pBlk%jed,pBlk%kst:pBlk%ked) )
+			   
+     allocate( pBlk%RHSi(nvar,pBlk%ist:pBlk%ied,pBlk%jst:pBlk%jed,pBlk%kst:pBlk%ked) )
+	 allocate( pBlk%RHSj(nvar,pBlk%ist:pBlk%ied,pBlk%jst:pBlk%jed,pBlk%kst:pBlk%ked) )
+	 allocate( pBlk%RHSk(nvar,pBlk%ist:pBlk%ied,pBlk%jst:pBlk%jed,pBlk%kst:pBlk%ked) )
+	 allocate( pBlk%RHS(nvar,pBlk%ist:pBlk%ied,pBlk%jst:pBlk%jed,pBlk%kst:pBlk%ked) )
+     
      allocate( pBlk%xcx(pBlk%ist:pBlk%ied,pBlk%jst:pBlk%jed,pBlk%kst:pBlk%ked),&
                pBlk%xcy(pBlk%ist:pBlk%ied,pBlk%jst:pBlk%jed,pBlk%kst:pBlk%ked),&
                pBlk%xcz(pBlk%ist:pBlk%ied,pBlk%jst:pBlk%jed,pBlk%kst:pBlk%ked) )
@@ -167,22 +173,22 @@ return
     enddo
     close(10)
 
-    open(10,file="output_RHS.dat",form="formatted")
-    write(10,*) numblk
-    do iblk=1,numblk
-        pBlk=>compblock(iblk)
-        write(10,*) pblk%ied-pblk%ist+1,pblk%jed-pblk%jst+1,pblk%ked-pblk%kst+1
-    enddo
-    do iblk=1,numblk
-        pBlk=>compblock(iblk)
-        write(10,*) 0.0,0.0,0.0,0.0
-        write(10,*) (((pBlk%RHS(1,i,j,k),i=pBlk%ist,pblk%ied),j=pblk%jst,pblk%jed),k=pblk%kst,pblk%ked),&
-        (((pBlk%RHS(2,i,j,k),i=pBlk%ist,pblk%ied),j=pblk%jst,pblk%jed),k=pblk%kst,pblk%ked),&
-        (((pBlk%RHS(3,i,j,k),i=pBlk%ist,pblk%ied),j=pblk%jst,pblk%jed),k=pblk%kst,pblk%ked),&
-        (((pBlk%RHS(4,i,j,k),i=pBlk%ist,pblk%ied),j=pblk%jst,pblk%jed),k=pblk%kst,pblk%ked),&
-        (((pBlk%RHS(5,i,j,k),i=pBlk%ist,pblk%ied),j=pblk%jst,pblk%jed),k=pblk%kst,pblk%ked)
-    enddo
-    close(10)
+    !open(10,file="output_RHS.dat",form="formatted")
+    !write(10,*) numblk
+    !do iblk=1,numblk
+    !    pBlk=>compblock(iblk)
+    !    write(10,*) pblk%ied-pblk%ist+1,pblk%jed-pblk%jst+1,pblk%ked-pblk%kst+1
+    !enddo
+    !do iblk=1,numblk
+    !    pBlk=>compblock(iblk)
+    !    write(10,*) 0.0,0.0,0.0,0.0
+    !    write(10,*) (((pBlk%RHS(1,i,j,k),i=pBlk%ist,pblk%ied),j=pblk%jst,pblk%jed),k=pblk%kst,pblk%ked),&
+    !    (((pBlk%RHS(2,i,j,k),i=pBlk%ist,pblk%ied),j=pblk%jst,pblk%jed),k=pblk%kst,pblk%ked),&
+    !    (((pBlk%RHS(3,i,j,k),i=pBlk%ist,pblk%ied),j=pblk%jst,pblk%jed),k=pblk%kst,pblk%ked),&
+    !    (((pBlk%RHS(4,i,j,k),i=pBlk%ist,pblk%ied),j=pblk%jst,pblk%jed),k=pblk%kst,pblk%ked),&
+    !    (((pBlk%RHS(5,i,j,k),i=pBlk%ist,pblk%ied),j=pblk%jst,pblk%jed),k=pblk%kst,pblk%ked)
+    !enddo
+    !close(10)
     
     end subroutine
     !//

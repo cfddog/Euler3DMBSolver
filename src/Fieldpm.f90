@@ -14,7 +14,7 @@ integer :: maxi,maxj,maxk                              !dont contain buffer,the 
 !flow field data
 real,pointer,dimension (:,:,:)   :: u,v,w,p,rho
 real,pointer,dimension (:,:,:,:) :: Q,Qn,dQn,dQ
-real,pointer,dimension (:,:,:,:) :: RHS
+real,pointer,dimension (:,:,:,:) :: RHSi,RHSj,RHSk,RHS
 !grid and its metrics
 real,pointer,dimension (:,:,:) :: xcoord,ycoord,zcoord
 real,pointer,dimension (:,:,:) :: xcx,xcy,xcz
@@ -38,7 +38,6 @@ use TYPEDEFINE
  integer                               :: MINDIMST,MAXDIMED
  real,pointer,dimension(:,:)           :: fp,fn,hflux,hp,hn
  real,pointer,dimension(:,:)           :: flux
- real,pointer                          :: arr(:,:),brr(:),xrr(:) !array used for solving band-eqn-system
  Real time_begin , time_end1 , time_end2
 end module
 module freepm

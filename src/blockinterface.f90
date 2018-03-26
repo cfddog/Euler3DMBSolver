@@ -310,64 +310,6 @@
 
     return
     end subroutine
-    !//
-    subroutine ExchangeBlkInfo_RHS(ist_src,ied_src,jst_src,jed_src,kst_src,ked_src,noblk_src,&
-                                   ist_tar,ied_tar,jst_tar,jed_tar,kst_tar,ked_tar,noblk_tar)
-    use fieldpm
-    type(BLOCK_TYPE),pointer :: pblk1,pblk2
-    pblk1=>compblock(noblk_src)
-    pblk2=>compblock(noblk_tar)
-    !decide three kinds of plane: const,negative,positive
-        if(abs(ist_src) .eq. abs(ied_src)) then
-            nconst=abs(ist_src)
-            
-            if(jed_src .lt. 0) then
-              nvarn=abs(jed_src-jst_src)+1     
-              nvarp=abs(ked_src-kst_src)+1
-            else
-              nvarn=abs(ked_src-kst_src)+1     
-              nvarp=abs(jed_src-jst_src)+1
-            endif  
-        elseif(abs(jst_src) .eq. abs(jed_src)) then
-            nconst=abs(jst_src)
-            if(ied_src .lt. 0) then
-              nvarn=abs(ied_src-ist_src)+1     
-              nvarp=abs(ked_src-kst_src)+1
-            else
-              nvarn=abs(ked_src-kst_src)+1     
-              nvarp=abs(ied_src-ist_src)+1
-            endif  
-        elseif(abs(kst_src) .eq. abs(ked_src)) then
-             nconst=abs(kst_src)
-            if(ied_src .lt. 0) then
-              nvarn=abs(ied_src-ist_src)+1     
-              nvarp=abs(jed_src-jst_src)+1
-            else
-              nvarn=abs(jed_src-jst_src)+1     
-              nvarp=abs(ied_src-ist_src)+1
-            endif
-        endif
-
-        do indx_c=1,len_buf+1    !len_buf increments in const direction
-            do indx_n=1,nvarn
-                do indx_p=1,nvarp
-        !decide the increment of block 1 and block 2 interface plane
-                   call decide_increment(i1,j1,k1,ist_src,ied_src,jst_src,jed_src,kst_src,ked_src,indx_c,indx_n,indx_p, 1) 
-                   call decide_increment(i2,j2,k2,ist_tar,ied_tar,jst_tar,jed_tar,kst_tar,ked_tar,indx_c,indx_n,indx_p,-1)                                 
-                    !specify the values
-                    pblk1%RHS(1,i1,j1,k1)=pblk2%RHS(1,i2,j2,k2)
-                    pblk1%RHS(2,i1,j1,k1)=pblk2%RHS(2,i2,j2,k2)
-                    pblk1%RHS(3,i1,j1,k1)=pblk2%RHS(3,i2,j2,k2)
-                    pblk1%RHS(4,i1,j1,k1)=pblk2%RHS(4,i2,j2,k2)
-                    pblk1%RHS(5,i1,j1,k1)=pblk2%RHS(5,i2,j2,k2)
-                enddo
-            enddo
-        enddo
-        
-    return
-    end subroutine
-    
-    subroutine BCProcess_B2BInterface(ist_src,ied_src,jst_src,jed_src,kst_src,ked_src,noblk_src,&
                                       ist_tar,ied_tar,jst_tar,jed_tar,kst_tar,ked_tar,noblk_tar)
     use fieldpm
     use constant

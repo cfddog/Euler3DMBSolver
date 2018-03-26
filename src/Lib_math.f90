@@ -15,7 +15,8 @@ end function
     
 subroutine BandEqnSolve(Np,m1,m2,arr,brr,xrr)
 real arr(Np,m1+m2+1),brr(Np),xrr(Np)
-real al(Np,m1+m2+1),indx(Np)
+real al(Np,m1+m2+1)
+integer indx(Np)
 
 call bandec(arr,Np,m1,m2,Np,m1+m2+1,al,m1+m2+1,indx,d) !LU decompostion of arr
 call banbks(arr,Np,m1,m2,Np,m1+m2+1,al,m1+m2+1,indx,brr) !band-eqn solution

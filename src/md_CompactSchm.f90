@@ -1,6 +1,6 @@
 module md_CompactSchm
     !Coeffs
-    !Kim_Opt4
+    !Kim_Opt4: Jae Wook Kim,AIAA JOURNAL Vol. 41, No. 12, December 2003
      real::ain_1= 0.6511278808920836
      real::ain_2= 0.2487500014377899
      real::ain_3= 0.00614479661269978
@@ -46,7 +46,7 @@ module md_CompactSchm
     !//i=nst+2
     arr(nst+2,1)=bb2_0;arr(nst+2,2)=bb2_1;arr(nst+2,3)=1.0;arr(nst+2,4)=bb2_3;arr(nst+2,5)=bb2_4
     brr(nst+2)=ab2_0*(varin(nst)-varin(nst+2))+ab2_1*(varin(nst+1)-varin(nst+2))+ab2_3*(varin(nst+3)-varin(nst+2))+ab2_4*(varin(nst+4)-varin(nst+2))+ab2_5*(varin(nst+5)-varin(nst+2))     
-    do icnt=nst+3,ned-2
+    do icnt=nst+3,ned-3
       arr(icnt,1)=cin_1;arr(icnt,2)=bin_1;arr(icnt,3)=1.0;arr(icnt,4)=bin_1;arr(icnt,5)=cin_1
       brr(icnt)=ain_1*(varin(icnt+1)-varin(icnt-1))+ain_2*(varin(icnt+2)-varin(icnt-2))+ain_3*(varin(icnt+3)-varin(icnt-3))
     enddo
@@ -56,7 +56,7 @@ module md_CompactSchm
     !//i=ned-1
     arr(ned-1,5)=0.;arr(ned-1,4)=bb1_0;arr(ned-1,3)=1.0;arr(ned-1,2)=bb1_2;arr(ned-1,1)=bb1_3
     brr(ned-1)=-ab1_0*(varin(ned)-varin(ned-1))-ab1_2*(varin(ned-2)-varin(ned-1))-ab1_3*(varin(ned-3)-varin(ned-1))-ab1_4*(varin(ned-4)-varin(ned-1))
-    !//i=nst+2
+    !//i=ned-2
     arr(ned-2,5)=bb2_0;arr(ned-2,4)=bb2_1;arr(ned-2,3)=1.0;arr(ned-2,2)=bb2_3;arr(ned-2,1)=bb2_4
     brr(ned-2)=-ab2_0*(varin(ned)-varin(ned-2))-ab2_1*(varin(ned-1)-varin(ned-2))-ab2_3*(varin(ned-3)-varin(ned-2))-ab2_4*(varin(ned-4)-varin(ned-2))-ab2_5*(varin(ned-5)-varin(ned-2))  
     !//call band-eqn solution
@@ -65,5 +65,5 @@ module md_CompactSchm
 	
     return
     end subroutine
-    
+	
     end module
