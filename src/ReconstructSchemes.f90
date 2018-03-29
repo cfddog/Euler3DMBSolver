@@ -80,7 +80,7 @@
     endif
 	do i1=1,5
        varin=flux(i1,nst:ned)
-       call CentralCompact_Opt4(nst,ned,varin,varout)
+       call Explicit_C4(nst,ned,varin,varout)
 	   i=icur;j=jcur;k=kcur
 	   do icnt=nst,ned
 	      pRHS(i1,i,j,k)=varout(icnt)

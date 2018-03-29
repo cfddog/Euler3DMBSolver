@@ -6,7 +6,7 @@
     type(BLOCK_TYPE),pointer :: pBlk
     integer iblkst,iblked,jblkst,jblked,kblkst,kblked
 	do iblk=1,numblk
-       pBlk=>compblock(no_blk)
+       pBlk=>compblock(iblk)
        iblkst=pBlk%icmpst;iblked=pBlk%icmped
        jblkst=pBlk%jcmpst;jblked=pBlk%jcmped
        kblkst=pBlk%kcmpst;kblked=pBlk%kcmped
@@ -17,8 +17,8 @@
 	   !the invicid flux
        do j=jblkst,jblked
            do k=kblkst,kblked
-               call SplittingFlux(nst,ned,nst,j,k,iinc,jinc,kinc,no_blk,iflagSplitSchm)
-               call ReconstrctFlux(nst,ned,nst,j,k,iinc,jinc,kinc,no_blk,iConScheme)
+               call SplittingFlux(nst,ned,nst,j,k,iinc,jinc,kinc,iblk,iSplitSchm)
+               call ReconstrctFlux(nst,ned,nst,j,k,iinc,jinc,kinc,iblk,iConScheme)
            enddo
        enddo
        endif
@@ -28,8 +28,8 @@
        ned=pBlk%jed
        do i=iblkst,iblked
            do k=kblkst,kblked
-               call SplittingFlux(nst,ned,i,nst,k,iinc,jinc,kinc,no_blk,iflagSplitSchm)
-               call ReconstrctFlux(nst,ned,i,nst,k,iinc,jinc,kinc,no_blk,iConScheme)
+               call SplittingFlux(nst,ned,i,nst,k,iinc,jinc,kinc,iblk,iflagSplitSchm)
+               call ReconstrctFlux(nst,ned,i,nst,k,iinc,jinc,kinc,iblk,iConScheme)
            enddo
        enddo
        endif
@@ -39,8 +39,8 @@
        ned=pBlk%ked
        do i=iblkst,iblked
            do j=jblkst,jblked
-               call SplittingFlux(nst,ned,i,j,nst,iinc,jinc,kinc,no_blk,iflagSplitSchm)
-               call ReconstrctFlux(nst,ned,i,j,nst,iinc,jinc,kinc,no_blk,iConScheme)
+               call SplittingFlux(nst,ned,i,j,nst,iinc,jinc,kinc,iblk,iflagSplitSchm)
+               call ReconstrctFlux(nst,ned,i,j,nst,iinc,jinc,kinc,iblk,iConScheme)
            enddo
        enddo
        endif
@@ -61,7 +61,7 @@
     return
     end subroutine
     
-    subroutine ReconstrctFlux(iblkst,iblked,icur,jcur,kcur,iinc,jinc,kinc,no_blk,iConScheme)
+    subroutine ReconstrctFlux(nst,ned,icur,jcur,kcur,iinc,jinc,kinc,no_blk,iConScheme)
     use fieldpm  
     use ctrlpm
 	

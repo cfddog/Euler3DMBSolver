@@ -21,9 +21,9 @@ do iblk=1,numblk
    !x_xc,y_xc,z_xc
   do j=pBlk%jcmpst,pBlk%jcmped
     do k=pBlk%kcmpst,pBlk%kcmped
-	     call CentralCompact_Opt4(pblk%icmpst,pblk%icmped,pBlk%xcoord(:,j,k),xxc(:,j,k))
-		 call CentralCompact_Opt4(pblk%icmpst,pblk%icmped,pBlk%ycoord(:,j,k),yxc(:,j,k))
-		 call CentralCompact_Opt4(pblk%icmpst,pblk%icmped,pBlk%zcoord(:,j,k),zxc(:,j,k))
+	     call Explicit_C4(pblk%icmpst,pblk%icmped,pBlk%xcoord(:,j,k),xxc(:,j,k))
+		 call Explicit_C4(pblk%icmpst,pblk%icmped,pBlk%ycoord(:,j,k),yxc(:,j,k))
+		 call Explicit_C4(pblk%icmpst,pblk%icmped,pBlk%zcoord(:,j,k),zxc(:,j,k))
 	enddo
   enddo
  if(pBlk%kcmped-pBlk%kcmpst+1 .eq. 3) then
@@ -39,9 +39,9 @@ do iblk=1,numblk
   else
   do i=pBlk%icmpst,pBlk%icmped
     do k=pBlk%kcmpst,pBlk%kcmped
-	     call CentralCompact_Opt4(pblk%jcmpst,pblk%jcmped,pBlk%xcoord(i,:,k),xet(i,:,k))
-		 call CentralCompact_Opt4(pblk%jcmpst,pblk%jcmped,pBlk%ycoord(i,:,k),yet(i,:,k))
-		 call CentralCompact_Opt4(pblk%jcmpst,pblk%jcmped,pBlk%zcoord(i,:,k),zet(i,:,k))
+	     call Explicit_C4(pblk%jcmpst,pblk%jcmped,pBlk%xcoord(i,:,k),xet(i,:,k))
+		 call Explicit_C4(pblk%jcmpst,pblk%jcmped,pBlk%ycoord(i,:,k),yet(i,:,k))
+		 call Explicit_C4(pblk%jcmpst,pblk%jcmped,pBlk%zcoord(i,:,k),zet(i,:,k))
 	enddo
   enddo
   endif 
@@ -58,9 +58,9 @@ do iblk=1,numblk
   else
   do i=pBlk%icmpst,pBlk%icmped
     do j=pBlk%jcmpst,pBlk%jcmped
-	     call CentralCompact_Opt4(pblk%jcmpst,pblk%jcmped,pBlk%xcoord(i,j,:),xct(i,j,:))
-		 call CentralCompact_Opt4(pblk%jcmpst,pblk%jcmped,pBlk%ycoord(i,j,:),yct(i,j,:))
-		 call CentralCompact_Opt4(pblk%jcmpst,pblk%jcmped,pBlk%zcoord(i,j,:),zct(i,j,:))
+	     call Explicit_C4(pblk%jcmpst,pblk%jcmped,pBlk%xcoord(i,j,:),xct(i,j,:))
+		 call Explicit_C4(pblk%jcmpst,pblk%jcmped,pBlk%ycoord(i,j,:),yct(i,j,:))
+		 call Explicit_C4(pblk%jcmpst,pblk%jcmped,pBlk%zcoord(i,j,:),zct(i,j,:))
 	enddo
    enddo
    endif   

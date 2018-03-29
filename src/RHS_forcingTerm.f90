@@ -5,7 +5,7 @@ subroutine RHSperblk_Forcing()
     type(BLOCK_TYPE),pointer :: pBlk
     integer iblkst,iblked,jblkst,jblked,kblkst,kblked
 	do iblk=1,numblk
-       pBlk=>compblock(no_blk)
+       pBlk=>compblock(iblk)
        iblkst=pBlk%icmpst;iblked=pBlk%icmped
        jblkst=pBlk%jcmpst;jblked=pBlk%jcmped
        kblkst=pBlk%kcmpst;kblked=pBlk%kcmped
@@ -15,7 +15,7 @@ subroutine RHSperblk_Forcing()
        ned=pBlk%ied
 	   do j=jblkst,jblked
 	   do k=kblkst,kblked
-	      call NlinArtDissipTerms(nst,ned,nst,j,k,iinc,jinc,kinc,no_blk)
+	      call NlinArtDissipTerms(nst,ned,nst,j,k,iinc,jinc,kinc,iblk)
 	   enddo
        enddo
        endif
@@ -25,7 +25,7 @@ subroutine RHSperblk_Forcing()
        ned=pBlk%jed
 	   do i=iblkst,iblked
 	   do k=kblkst,kblked
-	      call NlinArtDissipTerms(nst,ned,i,nst,k,iinc,jinc,kinc,no_blk)
+	      call NlinArtDissipTerms(nst,ned,i,nst,k,iinc,jinc,kinc,iblk)
 	   enddo
        enddo
        endif
@@ -35,7 +35,7 @@ subroutine RHSperblk_Forcing()
        ned=pBlk%ked
 	   do j=jblkst,jblked
 	   do i=iblkst,iblked
-	      call NlinArtDissipTerms(nst,ned,i,j,kst,iinc,jinc,kinc,no_blk)
+	      call NlinArtDissipTerms(nst,ned,i,j,kst,iinc,jinc,kinc,iblk)
 	   enddo
        enddo
        endif
@@ -49,7 +49,11 @@ subroutine NlinArtDissipTerms(nst,ned,icur,jcur,kcur,iinc,jinc,kinc,no_blk)
     type(BLOCK_TYPE),pointer :: pBlk
     real,pointer,dimension(:,:,:,:) :: pRHS !pointer to RHS
 	real,pointer,dimension(:,:,:) :: varx,vary,varz
+    real df(nst:ned,5)
     integer no_blk
+    b1=-0.1624382574577463
+    b2= 0.07309131357825455
+    b3=-0.01447042896399915
     pblk=>compblock(no_blk)
     i=icur;j=jcur;k=kcur
     idimst=iinc*pblk%ist+jinc*pblk%jst+kinc*pblk%kst
@@ -71,12 +75,15 @@ subroutine NlinArtDissipTerms(nst,ned,icur,jcur,kcur,iinc,jinc,kinc,no_blk)
 	i=icur
 	j=jcur
 	k=kcur
-	   pmin=p(i,j,k)
-	   pmax=p(i,j,k)
+	   pmin=pblk%p(i,j,k)
+	   pmax=pblk%p(i,j,k)
 	   Uc=varx(i,j,k)*pblk%u(i,j,k)+vary(i,j,k)*pblk%v(i,j,k)+varz(i,j,k)*pblk%w(i,j,k)
        cL=sqrt(gama*pblk%p(i,j,k)/pblk%rho(i,j,k))*sqrt(varx(i,j,k)**2+vary(i,j,k)**2+varz(i,j,k)**2)
+       vmod=sqrt(varx(i,j,k)**2+vary(i,j,k)**2+varz(i,j,k)**2)
 	   vlmin=Uc+cL
 	   vlmax=Uc+cL
+       vlmin1=(abs(Uc)+cL)/vmod
+	   vlmax1=(abs(Uc)+cL)/vmod
 	do icnt=nst,ned
 	   pmin=min(pblk%p(i,j,k),pmin)
 	   pmax=max(pblk%p(i,j,k),pmax)
@@ -85,8 +92,8 @@ subroutine NlinArtDissipTerms(nst,ned,icur,jcur,kcur,iinc,jinc,kinc,no_blk)
 	   vmod=sqrt(varx(i,j,k)**2+vary(i,j,k)**2+varz(i,j,k)**2)
 	   vlmin=min(vlmin,abs(Uc)+cL)
 	   vlmax=max(vlmax,abs(Uc)+cL)
-	   vlmin1=min(vlmin,(abs(Uc)+cL)/vmod)
-	   vlmax1=max(vlmax,(abs(Uc)+cL)/vmod)
+	   vlmin1=min(vlmin1,(abs(Uc)+cL)/vmod)
+	   vlmax1=max(vlmax1,(abs(Uc)+cL)/vmod)
 	   i=i+iinc
        j=j+jinc
        k=k+kinc
@@ -97,7 +104,7 @@ subroutine NlinArtDissipTerms(nst,ned,icur,jcur,kcur,iinc,jinc,kinc,no_blk)
 	alpham1=(alpham+1)/(alpham-1)*tanh(alpham-1)
 	betam1=(betam+1)/(betam-1)*tanh(betam-1)
 	Rj=(alpham+betam)/2./alpham/betam
-	fkj=(1./sigm**Rj)*(1+(sigm-1)*tanh(alpham/betam-1))*sqrt(abetam1*betam1)**(1+tanh(sigm-1))
+	fkj=(1./sigm**Rj)*(1+(sigm-1)*tanh(alpham/betam-1))*sqrt(alpham1*betam1)**(1+tanh(sigm-1))
 	!/////
 	i=icur
 	j=jcur
@@ -136,11 +143,11 @@ subroutine NlinArtDissipTerms(nst,ned,icur,jcur,kcur,iinc,jinc,kinc,no_blk)
 			   eps2=max(eps2,abs(rptmp)/(rptmp+1.e-7))
             enddo		  
           endif
-          eps2=fkj*eps2		  
+          eps2=fkj*eps2	  
 		  eps4=max(fkj-eps2,0.0)
-		  vlstn=vlmax-vlmin
+		  vlstn=max(vlmax-vlmin,0.01*(vlmax+vlmin))
 		  do i1=1,5
-             df(icnt,i1)=vlstn*(eps2*(pblk%Q(i1,i+iinc,j+jinc,k+kinc)-pblk%Q(i1,i,j,k))+
+             df(icnt,i1)=vlstn*(eps2*(pblk%Q(i1,i+iinc,j+jinc,k+kinc)-pblk%Q(i1,i,j,k))-&
 			                    eps4*(b1*(pblk%Q(i1,i+iinc,j+jinc,k+kinc)-pblk%Q(i1,i,j,k))+&
 								      b2*(pblk%Q(i1,i+2*iinc,j+2*jinc,k+2*kinc)-pblk%Q(i1,i-iinc,j-jinc,k-kinc))+&
 									  b3*(pblk%Q(i1,i+3*iinc,j+3*jinc,k+3*kinc)-pblk%Q(i1,i-2*iinc,j-2*jinc,k-2*kinc))) )
@@ -154,14 +161,17 @@ subroutine NlinArtDissipTerms(nst,ned,icur,jcur,kcur,iinc,jinc,kinc,no_blk)
 	i=icur
 	j=jcur
 	k=kcur
-	do icnt=nst,ned-3
-	   if(icnt .le. nst+3) then
+	do icnt=nst,ned
+	   if(icnt .le. nst+2 .or. icnt .ge. ned-2) then
+          do i1=1,5
+            pRHS(i1,i,j,k)=0.0
+          enddo
 	      i=i+iinc
           j=j+jinc
           k=k+kinc 
 	   else
           do i1=1,5	   
-	         pRHS(i,j,k,i1)=-(df(icnt,i1)-df(icnt-1,i1))  !move the forcing terms to left hand.so "minus"
+	         pRHS(i1,i,j,k)=-(df(icnt,i1)-df(icnt-1,i1))  !move the forcing terms to left hand.so "minus"
 		  enddo
 		  i=i+iinc
           j=j+jinc

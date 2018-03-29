@@ -52,15 +52,18 @@ end subroutine
  namelist /FreeParamters/ vMainf,Re,rhoinf,uinf,Tinf,Tw
  namelist /CtrlParamters/ isolver,nvar,dt,cfl,iSplitSchm,iConSchm,IVisSchm,iTimeSchm,&
                           Nmaxstep,Nsub,iperiod,ihybrid,iproj,eps_solver,istart,len_buf
- !//must give the paramters default values
-  open(10,file="freepm.dat")
-  read(10,nml=FreeParamters)
-  close(10)
-!//read the control parameters
-  open(10,file="ctrlpm.dat")
-  read(10,nml=CtrlParamters)
-  close(10)
-!// todo print the paramters, no default  
+ open(10,file="INPUT.in")
+ read(10,*) !freestream conditions
+ read(10,*) vMainf,Re,Tinf,Tw
+ read(10,*) !Equation sets
+ read(10,*) isolver,nvar
+ read(10,*) !controls
+ read(10,*) iSplitSchm,iConSchm,IVisSchm,iTimeSchm
+ read(10,*) dt,Nmaxstep,iperiod
+ read(10,*) istart
+ read(10,*) eps_solver
+ close(10)
+ 
  return  
  end subroutine
  subroutine AllocateVariables()
@@ -137,12 +140,19 @@ type(BLOCK_TYPE),pointer :: pBlk
        do i=pBlk%ist,pBlk%ied
           do j=pBlk%jst,pBlk%jed
               do k=pBlk%kst,pBlk%ked 
-                !todo: adding the aoa and aob
-                 pBlk%rho(i,j,k)=1.4
-                 pBlk%u(i,j,k)=3.0
-                 pBlk%v(i,j,k)=0.0
-                 pBlk%w(i,j,k)=0.0
-                 pBlk%p(i,j,k)=1.
+                 if(pblk%xcoord(i,j,k) .le. 0) then
+                   pBlk%rho(i,j,k)=0.125
+                   pBlk%u(i,j,k)=0.0
+                   pBlk%v(i,j,k)=0.0
+                   pBlk%w(i,j,k)=0.0
+                   pBlk%p(i,j,k)=0.1
+                else
+                   pBlk%rho(i,j,k)=1.0
+                   pBlk%u(i,j,k)=0.0
+                   pBlk%v(i,j,k)=0.0
+                   pBlk%w(i,j,k)=0.0
+                   pBlk%p(i,j,k)=1.0                 
+                endif
               enddo
           enddo
        enddo  

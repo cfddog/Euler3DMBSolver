@@ -5,12 +5,7 @@
       use constant
       ! select the Time-advanced methods 
       do iter=1,Nmaxstep
-        call CPU_TIME(t1)
-        if(itimeschm.eq.1) then
          call Runge_Kutta3(iter)   
-        endif 
-        call CPU_TIME(t2)
-        print*,"Step",iter,"time comsuming:",t2-t1
       enddo
 	  call OutputResults()
       return
@@ -62,9 +57,6 @@
          print*, "the solution has been converged,and output results."
          call OutputResults()
          stop
-       elseif(ddrho .gt. 1.e20) then
-         print*, "the solution has been diverged!stop!"
-         stop
        else
          print*, iter,dt,dt*iter,ddrho  !not steady situation, continue to compute
          if(mod(iter,iperiod) .eq. 0) then
@@ -84,8 +76,14 @@
    subroutine ComputeRHS()
    use fieldpm
    type(BLOCK_TYPE),pointer :: pBlk
-   type(BC_TYPE),pointer :: pbound
-   !///
+   !//init the RHS to zeros
+    do iblk=1,numblk
+	  pblk=>compblock(iblk)
+	  pblk%RHS=0.0
+	  pBlk%RHSi=0.0
+	  pBlk%RHSj=0.0
+	  pblk%RHSk=0.0
+    enddo
    call RHSperblk_Invis()  
    !ExchangeRHS()
    call AddToRHS()
@@ -101,7 +99,11 @@
 	
     subroutine AddToRHS()
 	use fieldpm
-	
+	type(BLOCK_TYPE),pointer :: pBlk
+	do iblk=1,numblk
+	  pblk=>compblock(iblk)
+	  pblk%RHS=pBlk%RHS+pBlk%RHSi+pBlk%RHSj+pblk%RHSk
+	enddo
 	return
 	end subroutine 
    

@@ -89,6 +89,8 @@
       enddo
     close(10)
 !got the max dimension ed and min dimension st
+   MINDIMST=100000
+   MAXDIMED=0
     do iblk=1,numblk
         pblk=>compblock(iblk)
         MINDIMST=min(MINDIMST,min(pblk%ist,pblk%jst,pblk%kst))
@@ -310,71 +312,3 @@
 
     return
     end subroutine
-                                      ist_tar,ied_tar,jst_tar,jed_tar,kst_tar,ked_tar,noblk_tar)
-    use fieldpm
-    use constant
-    
-    type(BLOCK_TYPE),pointer :: pblk1,pblk2
-    pblk1=>compblock(noblk_src)
-    pblk2=>compblock(noblk_tar)
-    !decide three kinds of plane: const,negative,positive
-        if(abs(ist_src) .eq. abs(ied_src)) then
-            nconst=abs(ist_src)
-            
-            if(jed_src .lt. 0) then
-              nvarn=abs(jed_src-jst_src)+1     
-              nvarp=abs(ked_src-kst_src)+1
-            else
-              nvarn=abs(ked_src-kst_src)+1     
-              nvarp=abs(jed_src-jst_src)+1
-            endif  
-        elseif(abs(jst_src) .eq. abs(jed_src)) then
-            nconst=abs(jst_src)
-            if(ied_src .lt. 0) then
-              nvarn=abs(ied_src-ist_src)+1     
-              nvarp=abs(ked_src-kst_src)+1
-            else
-              nvarn=abs(ked_src-kst_src)+1     
-              nvarp=abs(ied_src-ist_src)+1
-            endif  
-        elseif(abs(kst_src) .eq. abs(ked_src)) then
-             nconst=abs(kst_src)
-            if(ied_src .lt. 0) then
-              nvarn=abs(ied_src-ist_src)+1     
-              nvarp=abs(jed_src-jst_src)+1
-            else
-              nvarn=abs(jed_src-jst_src)+1     
-              nvarp=abs(ied_src-ist_src)+1
-            endif
-        endif
-
-        do indx_c=1,len_buf+1    !len_buf increments in const direction
-            do indx_n=1,nvarn
-                do indx_p=1,nvarp
-        !decide the increment of block 1 and block 2 interface plane
-                   call decide_increment(i1,j1,k1,ist_src,ied_src,jst_src,jed_src,kst_src,ked_src,indx_c,indx_n,indx_p, 1) 
-                   call decide_increment(i2,j2,k2,ist_tar,ied_tar,jst_tar,jed_tar,kst_tar,ked_tar,indx_c,indx_n,indx_p,-1)                                 
-                    !specify the values
-                    pblk1%Q(1,i1,j1,k1)=pblk2%Q(1,i2,j2,k2)
-                    pblk1%Q(2,i1,j1,k1)=pblk2%Q(2,i2,j2,k2)
-                    pblk1%Q(3,i1,j1,k1)=pblk2%Q(3,i2,j2,k2)
-                    pblk1%Q(4,i1,j1,k1)=pblk2%Q(4,i2,j2,k2)
-                    pblk1%Q(5,i1,j1,k1)=pblk2%Q(5,i2,j2,k2)
-                    !//
-                    pBlk1%rho(i1,j1,k1)=pBlk1%Q(1,i1,j1,k1)
-                    pBlk1%u(i1,j1,k1)  =pBlk1%Q(2,i1,j1,k1)/pBlk1%Q(1,i1,j1,k1)
-                    pBlk1%v(i1,j1,k1)  =pBlk1%Q(3,i1,j1,k1)/pBlk1%Q(1,i1,j1,k1)
-                    pBlk1%w(i1,j1,k1)  =pBlk1%Q(4,i1,j1,k1)/pBlk1%Q(1,i1,j1,k1) 
-                    pBlk1%p(i1,j1,k1)  =(gama-1)*( pBlk1%Q(5,i1,j1,k1)-&
-                                      0.5*( pBlk1%Q(2,i1,j1,k1)**2+pBlk1%Q(3,i1,j1,k1)**2+pBlk1%Q(4,i1,j1,k1)**2 )/pBlk1%Q(1,i1,j1,k1) )
-                enddo
-            enddo
-        enddo
-        
-    return
-    end subroutine
-    
-    
-    
-      
-      

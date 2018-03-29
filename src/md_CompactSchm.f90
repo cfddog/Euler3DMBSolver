@@ -65,5 +65,23 @@ module md_CompactSchm
 	
     return
     end subroutine
-	
+    
+    subroutine Explicit_C4(nst,ned,varin,varout)
+    real varin(nst:ned),varout(nst:ned)
+    do icnt=nst,ned
+        if(icnt .eq. nst) then
+            varout(icnt)=-11./6.*varin(icnt)+3.*varin(icnt+1)-3./2.*varin(icnt+2)+1./3.*varin(icnt+3)
+        elseif(icnt .eq. nst+1) then
+            varout(icnt)=-1./3.*varin(icnt-1)-1./2.*varin(icnt)+varin(icnt+1)-1./6*varin(icnt+2)
+        elseif(icnt .eq. ned) then
+            varout(icnt)=11./6.*varin(icnt)-3.*varin(icnt-1)+3./2.*varin(icnt-2)-1./3.*varin(icnt-3)
+        elseif(icnt .eq. ned-1) then
+           varout(icnt)= 1./3.*varin(icnt+1)+1./2.*varin(icnt)-varin(icnt-1)+1./6*varin(icnt-2)
+        else
+            varout(icnt)= 1./12.*varin(icnt-2.)-2./3.*varin(icnt-1)+2./3.*varin(icnt+1)-1./12*varin(icnt+2)
+        endif    
+    enddo
+    
+    return
+    endsubroutine
     end module
