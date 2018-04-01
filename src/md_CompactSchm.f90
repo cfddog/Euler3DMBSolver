@@ -1,66 +1,64 @@
 module md_CompactSchm
     !Coeffs
-    !Kim_Opt4: Jae Wook Kim,AIAA JOURNAL Vol. 41, No. 12, December 2003
-     real::ain_1= 0.6511278808920836
-     real::ain_2= 0.2487500014377899
-     real::ain_3= 0.00614479661269978
-     real::bin_1= 0.5775233202590945
-     real::cin_1= 0.08953895334666784
-    !//
-     real::ab0_1=-3.061503488555582
-     real::ab0_2= 5.917946021057852
-     real::ab0_3= 0.4176795271056629
-     real::bb0_1= 5.870156099940824
-     real::bb0_2= 3.157271034936285
-    !//
-     real::ab1_0=-0.5401943305881343
-     real::ab1_2= 0.8952361063034303
-     real::ab1_3= 0.2553815577627246
-     real::ab1_4= 0.007549029394582539
-     real::bb1_0= 0.1663921564068434
-     real::bb1_2= 0.7162501763222718
-     real::bb1_3= 0.08619830787164529
-    !//
-     real::ab2_0=-0.1327404414078232
-     real::ab2_1=-0.6819452549637237
-     real::ab2_3= 0.7109139355526556
-     real::ab2_4= 0.2459462758541114
-     real::ab2_5= 0.003965415751510620
-     real::bb2_0= 0.03447751898726934
-     real::bb2_1= 0.4406854601950040
-     real::bb2_3= 0.6055509079866320
-     real::bb2_4= 0.08141498512587530
+	!Kim_OSOT4: Jae Wook Kim,Journal of Computational Acoustics, Vol. 5, No. 2 (1997) 177-191
+	 real::Ain_1= 1.568098211519709
+     real::Ain_2= 0.2716571074522698
+     real::Ain_3=-0.02257678073547548
+     real::BETA_IN= 0.4085892691182515
+	 !//AT BCP=1
+	 real::AB1_1=-2.673444389108146
+     real::AB1_2= 1.468066764967325
+     real::AB1_3= 1.382688702485047
+	 REAL::AB1_4=-0.1773110783442254
+	 real::BETA_B1_2=2.701510934904742
+	 !//AT BCP=2
+	 real::AB2_1=-0.5088675754573845
+     real::AB2_2=-0.7029878533366753
+     real::AB2_3= 1.040385365448375
+	 REAL::AB2_4= 0.1867472036506759
+	 REAL::AB2_5=-0.01527714030499072
+	 real::BETA_B2_1=0.1532048781838751
+	 real::BETA_B2_3=0.7237110491082636
+	 !//AT BCP=3
+	 real::AB3_1=-0.013127263621621
+     real::AB3_2=-0.6038029221734134
+     real::AB3_3=-0.4395154246847092
+	 REAL::AB3_4= 0.96090920472974
+	 REAL::AB3_5= 0.1010303485585628
+	 REAL::AB3_6=-0.005493942808558833
+	 real::BETA_B3_2=0.2234544771621557
+	 real::BETA_B3_4=0.5530910456756884
     contains
    !//Jae Wook Kim,AIAA JOURNAL Vol. 41, No. 12, December 2003
     subroutine CentralCompact_Opt4(nst,ned,varin,varout)
     real varin(nst:ned),varout(nst:ned)
-    real arr(nst:ned,5),brr(nst:ned),xrr(nst:ned)
+    real arr(nst:ned,3),brr(nst:ned),xrr(nst:ned)
 	
     !fulfill the matrix
     !//i=nst
-    arr(nst,1)=0.;arr(nst,2)=0.0;arr(nst,3)=1.0;arr(nst,4)=bb0_1;arr(nst,5)=bb0_2
-    brr(nst)=ab0_1*(varin(nst+1)-varin(nst))+ab0_2*(varin(nst+2)-varin(nst))+ab0_3*(varin(nst+3)-varin(nst))
+    arr(nst,1)=0.;         arr(nst,2)=1.0;  arr(nst,3)=BETA_B1_2
+	brr(nst,1)=AB1_1*varin(nst)+AB1_2*varin(nst+1)+AB1_3*varin(nst+2)+AB1_4*varin(nst+3)
     !//i=nst+1
-    arr(nst+1,1)=0.;arr(nst+1,2)=bb1_0;arr(nst+1,3)=1.0;arr(nst+1,4)=bb1_2;arr(nst+1,5)=bb1_3
-    brr(nst+1)=ab1_0*(varin(nst)-varin(nst+1))+ab1_2*(varin(nst+2)-varin(nst+1))+ab1_3*(varin(nst+3)-varin(nst+1))+ab1_4*(varin(nst+4)-varin(nst+1))
+    arr(nst+1,1)=BETA_B2_1;arr(nst+1,2)=1.0;arr(nst+1,3)=BETA_B2_3
+	brr(nst+1,1)=AB2_1*varin(nst)+AB2_2*varin(nst+1)+AB2_3*varin(nst+2)+AB2_4*varin(nst+3)+AB2_5*varin(nst+4)
     !//i=nst+2
-    arr(nst+2,1)=bb2_0;arr(nst+2,2)=bb2_1;arr(nst+2,3)=1.0;arr(nst+2,4)=bb2_3;arr(nst+2,5)=bb2_4
-    brr(nst+2)=ab2_0*(varin(nst)-varin(nst+2))+ab2_1*(varin(nst+1)-varin(nst+2))+ab2_3*(varin(nst+3)-varin(nst+2))+ab2_4*(varin(nst+4)-varin(nst+2))+ab2_5*(varin(nst+5)-varin(nst+2))     
+    arr(nst+2,1)=BETA_B3_2;arr(nst+2,2)=1.0;arr(nst+2,3)=BETA_B3_4
+	brr(nst+2,1)=AB3_1*varin(nst)+AB3_2*varin(nst+1)+AB3_3*varin(nst+2)+AB3_4*varin(nst+3)+AB3_5*varin(nst+4)+AB3_6*varin(nst+5)
     do icnt=nst+3,ned-3
-      arr(icnt,1)=cin_1;arr(icnt,2)=bin_1;arr(icnt,3)=1.0;arr(icnt,4)=bin_1;arr(icnt,5)=cin_1
-      brr(icnt)=ain_1*(varin(icnt+1)-varin(icnt-1))+ain_2*(varin(icnt+2)-varin(icnt-2))+ain_3*(varin(icnt+3)-varin(icnt-3))
+      arr(icnt,1)=BETA_IN;arr(icnt,2)=1.0;arr(icnt,3)=BETA_IN
+	  brr(icnt,1)=Ain_1*(varin(icnt+1)-varin(icnt-1))/3.+Ain_2*(varin(icnt+2)-varin(icnt-2))/4.+Ain_3*(varin(icnt+3)-varin(icnt-3))/6.
     enddo
     !//i=ned
-    arr(ned,5)=0.;arr(ned,4)=0.0;arr(ned,3)=1.0;arr(ned,2)=bb0_1;arr(ned,1)=bb0_2
-    brr(ned)=-ab0_1*(varin(ned-1)-varin(ned))-ab0_2*(varin(ned-2)-varin(ned))-ab0_3*(varin(ned-3)-varin(ned))
+    arr(ned,3)=0.0 ;arr(ned,2)=1.0;arr(ned,1)=-BETA_B1_2
+	brr(ned,1)=-AB1_1*varin(ned)-AB1_2*varin(ned-1)-AB1_3*varin(ned-2)-AB1_4*varin(ned-3)
     !//i=ned-1
-    arr(ned-1,5)=0.;arr(ned-1,4)=bb1_0;arr(ned-1,3)=1.0;arr(ned-1,2)=bb1_2;arr(ned-1,1)=bb1_3
-    brr(ned-1)=-ab1_0*(varin(ned)-varin(ned-1))-ab1_2*(varin(ned-2)-varin(ned-1))-ab1_3*(varin(ned-3)-varin(ned-1))-ab1_4*(varin(ned-4)-varin(ned-1))
+    arr(ned-1,3)=BETA_B2_1;arr(ned-1,2)=1.0;arr(ned-1,1)=BETA_B2_3
+	brr(ned-1,1)=-AB2_1*varin(ned)-AB2_2*varin(ned-1)-AB2_3*varin(ned-2)-AB2_4*varin(ned-3)-AB2_5*varin(ned-4)
     !//i=ned-2
-    arr(ned-2,5)=bb2_0;arr(ned-2,4)=bb2_1;arr(ned-2,3)=1.0;arr(ned-2,2)=bb2_3;arr(ned-2,1)=bb2_4
-    brr(ned-2)=-ab2_0*(varin(ned)-varin(ned-2))-ab2_1*(varin(ned-1)-varin(ned-2))-ab2_3*(varin(ned-3)-varin(ned-2))-ab2_4*(varin(ned-4)-varin(ned-2))-ab2_5*(varin(ned-5)-varin(ned-2))  
+    arr(ned-2,3)=BETA_B3_2;arr(ned-2,2)=1.0;arr(ned-2,1)=BETA_B3_4
+	brr(ned-2,1)=-AB3_1*varin(ned)-AB3_2*varin(ned-1)-AB3_3*varin(ned-2)-AB3_4*varin(ned-3)-AB3_5*varin(ned-4)-AB3_6*varin(ned-5)
     !//call band-eqn solution
-    call BandEqnSolve(ned-nst+1,2,2,arr,brr,xrr)
+    call BandEqnSolve(ned-nst+1,1,1,arr,brr,xrr)
     varout=xrr
 	
     return
