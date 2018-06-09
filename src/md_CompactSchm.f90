@@ -28,6 +28,19 @@ module md_CompactSchm
 	 REAL::AB3_6=-0.005493942808558833
 	 real::BETA_B3_2=0.2234544771621557
 	 real::BETA_B3_4=0.5530910456756884
+	 !Pade 4th
+	 real::pade4th_alpha=0.25
+	 real::pada4th_a1=1.5
+	 !pade:6th
+	 real::pade6th_alpha=0.333333333333333
+	 real::pade6th_a1=1.555555555555556   !14/9
+	 real::pade6th_a2=0.1111111111111111  !1/9
+	 !pade BCP=1
+	 real::pade4th_alpha_1=3.
+	 real::pade4th_BC_a1=-2.833333333333333 !-17/6
+	 real::pade4th_BC_a2=1.50
+	 real::pade4th_BC_a3=1.5
+	 real::pade4th_BC_a4=-0.1666666666666667
     contains
    !//Jae Wook Kim,AIAA JOURNAL Vol. 41, No. 12, December 2003
     subroutine CentralCompact_Opt4(nst,ned,varin,varout)
@@ -102,8 +115,44 @@ module md_CompactSchm
     varout=xrr
 	
     return
-    end subroutine
-    
+	end subroutine
+	!//Pade 6th compact scheme
+	subroutine CompactPade6th(nst,ned,varin,varout)
+	real varin(nst:ned),varout(nst:ned)
+	real arr(nst:ned,3),brr(nst:ned),xrr(nst:ned)	
+	!fulfill the matrix
+	do icnt=nst,ned
+		if(icnt .eq. nst) then
+			arr(icnt,1)=0.0
+			arr(icnt,2)=1.0
+			arr(icnt,3)=pade4th_alpha_1
+			brr(icnt)=pade4th_BC_a1*varin(icnt  )+pade4th_BC_a2*varin(icnt+1)+&
+					  pade4th_BC_a3*varin(icnt+2)+pade4th_BC_a4*varin(icnt+3)
+		elseif(icnt .eq. ned) then
+			arr(icnt,1)=0.0
+			arr(icnt,2)=1.0
+			arr(icnt,3)=pade4th_alpha_1
+			brr(icnt)=-(pade4th_BC_a1*varin(icnt  )+pade4th_BC_a2*varin(icnt-1)+&
+					  	pade4th_BC_a3*varin(icnt-2)+pade4th_BC_a4*varin(icnt-3) )
+		elseif(icnt .eq. nst+1 .or. icnt .eq. ned-1) then
+			arr(icnt,1)=pade4th_alpha
+			arr(icnt,2)=1.0
+			arr(icnt,3)=pade4th_alpha
+			brr(icnt)=pade4th_a1*(varin(icnt-1)+varin(icnt+1))/2.
+		else
+			arr(icnt,1)=pade6th_alpha
+			arr(icnt,2)=1.0
+			arr(icnt,3)=pade6th_alpha
+			brr(icnt)=pade6th_a1*(varin(icnt-1)+varin(icnt+1))/2.+pade6th_a2*(varin(icnt-2)+varin(icnt+2))/4.
+		endif		  
+	enddo
+	!//call band-eqn solution
+    call BandEqnSolve(ned-nst+1,1,1,arr,brr,xrr)
+	varout=xrr
+	
+	return
+	end subroutine
+
     subroutine Explicit_C4(nst,ned,varin,varout)
     real varin(nst:ned),varout(nst:ned)
     do icnt=nst,ned
@@ -121,5 +170,6 @@ module md_CompactSchm
     enddo
     
     return
-    endsubroutine
+	endsubroutine
+	
     end module
