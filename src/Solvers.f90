@@ -30,7 +30,7 @@
 	  
        ddrho=0.0
        do iRk=1,3 !todo: 3 steps needed
-          call ComputeRHS    
+          call ComputeRHS(iRk)    
           do iblk=1,numblk
             pBlk=>compblock(iblk)
             do i=pBlk%icmpst,pBlk%icmped
@@ -73,9 +73,10 @@
        return
    end subroutine
    
-   subroutine ComputeRHS()
+   subroutine ComputeRHS(iRk)
    use fieldpm
    type(BLOCK_TYPE),pointer :: pBlk
+   integer irk
    !//init the RHS to zeros
     do iblk=1,numblk
 	  pblk=>compblock(iblk)
@@ -90,9 +91,21 @@
    !call RHSperblk_Vis()
    !ExchangeRHS()
    !call AddToRHS()
+
    call RHSperblk_Forcing()
    !ExchangeRHS() 
    call AddToRHS()
+   !
+   do iblk=1,numblk
+       pblk=>compblock(iblk)
+       imax1=pblk%ied-pblk%ist+1
+       jmax1=pblk%jed-pblk%jst+1
+       kmax1=pblk%ked-pblk%kst+1
+       do i1=1,5
+          call filterprocess(pblk%RHS(i1,pblk%ist:pblk%ied,pblk%jst:pblk%jed,pblk%kst:pblk%ked),&
+                             imax1,jmax1,kmax1)
+       enddo                     
+   enddo   
    !
     return 
     end subroutine 

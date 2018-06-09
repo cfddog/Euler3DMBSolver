@@ -145,7 +145,7 @@ subroutine NlinArtDissipTerms(nst,ned,icur,jcur,kcur,iinc,jinc,kinc,no_blk)
           endif
           eps2=fkj*eps2	  
 		  eps4=max(fkj-eps2,0.0)
-		  vlstn=max(vlmax-vlmin,0.01*(vlmax+vlmin))
+		  vlstn=max(vlmax-vlmin,0.001*(vlmax+vlmin))
 		  do i1=1,5
              df(icnt,i1)=vlstn*(eps2*(pblk%Q(i1,i+iinc,j+jinc,k+kinc)-pblk%Q(i1,i,j,k))-&
 			                    eps4*(b1*(pblk%Q(i1,i+iinc,j+jinc,k+kinc)-pblk%Q(i1,i,j,k))+&

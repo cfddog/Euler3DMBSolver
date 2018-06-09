@@ -36,27 +36,67 @@ module md_CompactSchm
 	
     !fulfill the matrix
     !//i=nst
-    arr(nst,1)=0.;         arr(nst,2)=1.0;  arr(nst,3)=BETA_B1_2
-	brr(nst,1)=AB1_1*varin(nst)+AB1_2*varin(nst+1)+AB1_3*varin(nst+2)+AB1_4*varin(nst+3)
+    arr(nst,1)=0.; 
+	arr(nst,2)=1.0; 
+	arr(nst,3)=BETA_B1_2
+	brr(nst)=AB1_1*varin(nst)+&
+	           AB1_2*varin(nst+1)+&
+			   AB1_3*varin(nst+2)+&
+			   AB1_4*varin(nst+3)
     !//i=nst+1
-    arr(nst+1,1)=BETA_B2_1;arr(nst+1,2)=1.0;arr(nst+1,3)=BETA_B2_3
-	brr(nst+1,1)=AB2_1*varin(nst)+AB2_2*varin(nst+1)+AB2_3*varin(nst+2)+AB2_4*varin(nst+3)+AB2_5*varin(nst+4)
+    arr(nst+1,1)=BETA_B2_1;
+	arr(nst+1,2)=1.0;
+	arr(nst+1,3)=BETA_B2_3
+	brr(nst+1)=AB2_1*varin(nst)+&
+	             AB2_2*varin(nst+1)+&
+				 AB2_3*varin(nst+2)+&
+				 AB2_4*varin(nst+3)+&
+				 AB2_5*varin(nst+4)
     !//i=nst+2
-    arr(nst+2,1)=BETA_B3_2;arr(nst+2,2)=1.0;arr(nst+2,3)=BETA_B3_4
-	brr(nst+2,1)=AB3_1*varin(nst)+AB3_2*varin(nst+1)+AB3_3*varin(nst+2)+AB3_4*varin(nst+3)+AB3_5*varin(nst+4)+AB3_6*varin(nst+5)
+    arr(nst+2,1)=BETA_B3_2;
+	arr(nst+2,2)=1.0;
+	arr(nst+2,3)=BETA_B3_4
+	brr(nst+2)=AB3_1*varin(nst)+&
+	             AB3_2*varin(nst+1)+&
+				 AB3_3*varin(nst+2)+&
+				 AB3_4*varin(nst+3)+&
+				 AB3_5*varin(nst+4)+&
+				 AB3_6*varin(nst+5)
     do icnt=nst+3,ned-3
-      arr(icnt,1)=BETA_IN;arr(icnt,2)=1.0;arr(icnt,3)=BETA_IN
-	  brr(icnt,1)=Ain_1*(varin(icnt+1)-varin(icnt-1))/3.+Ain_2*(varin(icnt+2)-varin(icnt-2))/4.+Ain_3*(varin(icnt+3)-varin(icnt-3))/6.
+      arr(icnt,1)=BETA_IN;
+	  arr(icnt,2)=1.0
+	  arr(icnt,3)=BETA_IN
+	  brr(icnt)=Ain_1*(varin(icnt+1)-varin(icnt-1))/2.&
+	             +Ain_2*(varin(icnt+2)-varin(icnt-2))/4.&
+				 +Ain_3*(varin(icnt+3)-varin(icnt-3))/6.
     enddo
     !//i=ned
-    arr(ned,3)=0.0 ;arr(ned,2)=1.0;arr(ned,1)=-BETA_B1_2
-	brr(ned,1)=-AB1_1*varin(ned)-AB1_2*varin(ned-1)-AB1_3*varin(ned-2)-AB1_4*varin(ned-3)
+    arr(ned,3)=0.0 
+	arr(ned,2)=1.0
+	arr(ned,1)=-BETA_B1_2
+	brr(ned)=-AB1_1*varin(ned)&
+	           -AB1_2*varin(ned-1)&
+			   -AB1_3*varin(ned-2)&
+			   -AB1_4*varin(ned-3)
     !//i=ned-1
-    arr(ned-1,3)=BETA_B2_1;arr(ned-1,2)=1.0;arr(ned-1,1)=BETA_B2_3
-	brr(ned-1,1)=-AB2_1*varin(ned)-AB2_2*varin(ned-1)-AB2_3*varin(ned-2)-AB2_4*varin(ned-3)-AB2_5*varin(ned-4)
+    arr(ned-1,3)=BETA_B2_1
+	arr(ned-1,2)=1.0
+	arr(ned-1,1)=BETA_B2_3
+	brr(ned-1)=-AB2_1*varin(ned)&
+	             -AB2_2*varin(ned-1)&
+				 -AB2_3*varin(ned-2)&
+				 -AB2_4*varin(ned-3)&
+				 -AB2_5*varin(ned-4)
     !//i=ned-2
-    arr(ned-2,3)=BETA_B3_2;arr(ned-2,2)=1.0;arr(ned-2,1)=BETA_B3_4
-	brr(ned-2,1)=-AB3_1*varin(ned)-AB3_2*varin(ned-1)-AB3_3*varin(ned-2)-AB3_4*varin(ned-3)-AB3_5*varin(ned-4)-AB3_6*varin(ned-5)
+    arr(ned-2,3)=BETA_B3_2
+	arr(ned-2,2)=1.0
+	arr(ned-2,1)=BETA_B3_4
+	brr(ned-2)=-AB3_1*varin(ned)&
+	             -AB3_2*varin(ned-1)&
+				 -AB3_3*varin(ned-2)&
+				 -AB3_4*varin(ned-3)&
+				 -AB3_5*varin(ned-4)&
+				 -AB3_6*varin(ned-5)
     !//call band-eqn solution
     call BandEqnSolve(ned-nst+1,1,1,arr,brr,xrr)
     varout=xrr

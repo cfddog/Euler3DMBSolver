@@ -182,24 +182,7 @@ return
         (((pBlk%p(i,j,k),i=pBlk%icmpst,pblk%icmped),j=pblk%jcmpst,pblk%jcmped),k=pblk%kcmpst,pblk%kcmped)
     enddo
     close(10)
-
-    !open(10,file="output_RHS.dat",form="formatted")
-    !write(10,*) numblk
-    !do iblk=1,numblk
-    !    pBlk=>compblock(iblk)
-    !    write(10,*) pblk%ied-pblk%ist+1,pblk%jed-pblk%jst+1,pblk%ked-pblk%kst+1
-    !enddo
-    !do iblk=1,numblk
-    !    pBlk=>compblock(iblk)
-    !    write(10,*) 0.0,0.0,0.0,0.0
-    !    write(10,*) (((pBlk%RHS(1,i,j,k),i=pBlk%ist,pblk%ied),j=pblk%jst,pblk%jed),k=pblk%kst,pblk%ked),&
-    !    (((pBlk%RHS(2,i,j,k),i=pBlk%ist,pblk%ied),j=pblk%jst,pblk%jed),k=pblk%kst,pblk%ked),&
-    !    (((pBlk%RHS(3,i,j,k),i=pBlk%ist,pblk%ied),j=pblk%jst,pblk%jed),k=pblk%kst,pblk%ked),&
-    !    (((pBlk%RHS(4,i,j,k),i=pBlk%ist,pblk%ied),j=pblk%jst,pblk%jed),k=pblk%kst,pblk%ked),&
-    !    (((pBlk%RHS(5,i,j,k),i=pBlk%ist,pblk%ied),j=pblk%jst,pblk%jed),k=pblk%kst,pblk%ked)
-    !enddo
-    !close(10)
-    
+        
     end subroutine
     !//
     subroutine RLmaxtrix(no_blk,icur,jcur,kcur,iinc,jinc,kinc,RM,LM)
@@ -342,4 +325,30 @@ return
      enddo
      
     return
+    end subroutine
+
+    subroutine filterprocess(var3d,imax1,jmax1,kmax1)
+        use md_filtering
+        real var3d(imax1,jmax1,kmax1)
+        if(imax1 .gt. 3 .and. idir .eq. 1) then
+            do k=1,kmax1
+                 do j=1,jmax1
+                    call FilterVisbalTenth(imax1,var3d)
+                 enddo
+            enddo
+        elseif(jmax1 .gt. 3 .and. jdir .eq. 1) then
+            do k=1,kmax1
+                do i=1,imax1
+                    call FilterVisbalTenth(jmax1,var3d)
+                enddo
+            enddo
+        elseif(kmax1 .gt. 3 .and. kdir .eq.1) then
+            do j=1,jmax1
+                do i=1,imax1
+                    call FilterVisbalTenth(kmax1,var3d)
+                enddo
+            enddo
+        endif
+
+        return
     end subroutine

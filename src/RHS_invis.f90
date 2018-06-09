@@ -65,7 +65,7 @@
     use fieldpm  
     use ctrlpm
 	
-	    call CentralCompact_Opt4(nst,ned,icur,jcur,kcur,iinc,jinc,kinc,no_blk)
+	    call Scheme_OptC4(nst,ned,icur,jcur,kcur,iinc,jinc,kinc,no_blk)
 		
 	return
     end subroutine
